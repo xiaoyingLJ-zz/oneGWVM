@@ -3,10 +3,14 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "Name": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Input the virtual machine name"
+      }
     },        
     "Size": {
-        "type": "string"
+        "type": "string",
+        "defaultValue": "Standard_DS3_v2"
     },
     "User name": {
       "type": "string"
@@ -15,31 +19,57 @@
       "type": "securestring"
     },
     "windowsOSVersion": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "2016-Datacenter",
+      "allowedValues": [
+        "2008-R2-SP1",
+        "2012-Datacenter",
+        "2012-R2-Datacenter",
+        "2016-Datacenter-with-Containers",
+        "2016-Datacenter"
+      ],
+      "metadata": {
+        "description": "The Windows version for the VM. This will pick a fully patched image of this given Windows version."
+      }
     },
     "dnsLabelPrefix": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
+      }
     },
     "gatewayKey": {
-      "type": "securestring"
+      "type": "securestring",
+      "metadata":{
+        "description": "gateway key"
+      }
     },
     "open gateway port": {
-      "type": "string"
+      "type": "string",
+      "allowedValues": ["Yes", "No"],
+      "defaultValue": "Yes",
+      "metadata":{
+        "description": "Do you want open gateway port (8050)?"
+      }
     },
     "virtualNetworkName/subnetName":{
-    	"type": "string"
+        "type": "string",
+        "metadata": {
+            "description": "VNET name and its subnet name"
+        }
     }
   },
   "variables": {
+    "prefix": "[split(parameters('Name'), '-')[0]]",
   	"vnetSettings":"[split(parameters('virtualNetworkName/subnetName'), '/')]",
     "virtualNetworkName": "[variables('vnetSettings')[0]]",
     "subnetName": "[variables('vnetSettings')[1]]",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
-    "storageAccountName": "[take(concat(toLower(parameters('Name')), uniquestring(resourceGroup().id)), 24)]",
+    "storageAccountName": "[take(concat(toLower(variables('prefix')), uniquestring(resourceGroup().id)), 24)]",
     "nicName": "[concat(parameters('Name'), 'Nic')]",
     "publicIPAddressName": "[concat(parameters('Name'), '-ip')]",
     "networkSecurityGroupName": "[concat(parameters('Name'), 'nsg')]",
-    "scriptURL": "https://raw.githubusercontent.com/xiaoyingLJ/createVM/master/gatewayInstall.ps1",
+    "scriptURL": "https://raw.githubusercontent.com/xiaoyingLJ/oneGWVM/master/gatewayInstall.ps1",
     "scriptParameters": "[concat('-gatewayKey ', parameters('gatewayKey'))]"
   },
   "resources": [

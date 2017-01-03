@@ -5,6 +5,7 @@
     "Name": {
       "type": "string",
       "maxLength": 15,
+      "minLength": 3,
       "metadata": {
         "description": "Input the virtual machine name"
       }

@@ -75,6 +75,9 @@
       "name": "[variables('storageAccountName')]",
       "apiVersion": "2016-01-01",
       "location": "[resourceGroup().location]",
+      "tags": {
+            "dept": "test"
+      },
       "sku": {
         "name": "Standard_LRS"
       },
@@ -86,6 +89,9 @@
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('publicIPAddressName')]",
       "location": "[resourceGroup().location]",
+      "tags": {
+            "dept": "test"
+      },
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
@@ -98,6 +104,9 @@
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[variables('virtualNetworkName')]",
       "location": "[resourceGroup().location]",
+      "tags": {
+            "dept": "test"
+      },
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
@@ -119,6 +128,9 @@
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('nicName')]",
       "location": "[resourceGroup().location]",
+      "tags": {
+            "dept": "test"
+      },
       "dependsOn": [
         "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
         "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
@@ -149,6 +161,9 @@
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('Name')]",
       "location": "[resourceGroup().location]",
+      "tags": {
+            "dept": "test"
+      },
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
         "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
@@ -208,6 +223,9 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "apiVersion": "2016-09-01",
       "location": "[resourceGroup().location]",
+      "tags": {
+            "dept": "test"
+      },
       "properties": {
         "securityRules": [
           {
@@ -231,6 +249,9 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "apiVersion": "2016-09-01",
       "location": "[resourceGroup().location]",
+      "tags": {
+            "dept": "test"
+      },
       "properties": {
         "securityRules": [
           {
@@ -267,6 +288,9 @@
       "name": "[concat(parameters('Name'),'/', parameters('Name'),'installGW')]",
       "apiVersion": "2015-06-15",
       "location": "[resourceGroup().location]",
+      "tags": {
+            "dept": "test"
+      },
       "dependsOn": [
         "[resourceId('Microsoft.Compute/virtualMachines/',parameters('Name'))]",
         "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"

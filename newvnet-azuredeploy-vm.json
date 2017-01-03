@@ -19,7 +19,10 @@
             "Standard_DS11", "Standard_DS12", "Standard_DS13", "Standard_DS14",
             "Standard_GS1", "Standard_GS2", "Standard_GS3", "Standard_GS4", "Standard_GS5",
             "Standard_F1s", "Standard_F2s", "Standard_F4s", "Standard_F8s", "Standard_F16s",
-        ]
+        ],
+        "metadata":{
+          "description": "The size of virtual machine. Pricing link: https://azure.microsoft.com/en-us/pricing/details/virtual-machines/windows/ "
+        }
     },
     "userName": {
       "type": "string"
@@ -47,13 +50,13 @@
         "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
       }
     },
-    "gatewayKey": {
+    "gatewayAuthenticationKey": {
       "type": "securestring",
       "metadata":{
         "description": "gateway key"
       }
     },
-    "openGatewayPort": {
+    "allowIncomingRemoteFromCredentialManager": {
       "type": "string",
       "allowedValues": ["Yes", "No"],
       "defaultValue": "Yes",
@@ -141,7 +144,7 @@
       "dependsOn": [
         "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
         "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-        "[resourceId('Microsoft.Network/networkSecurityGroups/', concat(variables('networkSecurityGroupName'), parameters('openGatewayPort')))]"
+        "[resourceId('Microsoft.Network/networkSecurityGroups/', concat(variables('networkSecurityGroupName'), parameters('allowIncomingRemoteFromCredentialManager')))]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -159,7 +162,7 @@
           }
         ],
         "networkSecurityGroup": {
-            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('networkSecurityGroupName'), parameters('openGatewayPort')))]"
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(variables('networkSecurityGroupName'), parameters('allowIncomingRemoteFromCredentialManager')))]"
         }
       }
     },

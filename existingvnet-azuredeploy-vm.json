@@ -4,6 +4,7 @@
   "parameters": {
     "Name": {
       "type": "string",
+      "maxLength": 15,
       "metadata": {
         "description": "Input the virtual machine name"
       }
@@ -12,7 +13,7 @@
         "type": "string",
         "defaultValue": "Standard_DS3_v2"
     },
-    "User name": {
+    "userName": {
       "type": "string"
     },
     "Password": {
@@ -140,7 +141,7 @@
         },
         "osProfile": {
           "computerName": "[parameters('Name')]",
-          "adminUsername": "[parameters('User name')]",
+          "adminUsername": "[parameters('userName')]",
           "adminPassword": "[parameters('Password')]"
         },
         "storageProfile": {
@@ -258,8 +259,10 @@
         "typeHandlerVersion": "1.7",
         "autoUpgradeMinorVersion":true,
         "settings": {
-          "fileUris": [ "[variables('scriptURL')]"],
-          "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File gatewayInstall.ps1 ', variables('scriptParameters'), ' -vmdnsname ', reference(variables('publicIPAddressName')).dnsSettings.fqdn)]"
+          "fileUris": [ "[variables('scriptURL')]"]
+        },
+        "protectedSettings": {
+          "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File gatewayInstall.ps1 ', parameters('gatewayKey'), ' ', reference(variables('publicIPAddressName')).dnsSettings.fqdn)]"
         }
       }
     }

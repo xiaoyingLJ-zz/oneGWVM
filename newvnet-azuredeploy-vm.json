@@ -69,6 +69,9 @@
     }
   },
   "variables": {
+    "baseUri": "https://raw.githubusercontent.com/xiaoyingLJ/oneGWVM/master/",
+    "nsglink": "[concat(variables('baseUri'), parameters('allowIncomingRemoteFromCredentialManager'),'IncomingRemote.json')]",
+    "nsgTemplateName": "[concat(parameters('Name'), 'NSGTemplate')]",
     "prefix": "[split(parameters('Name'), '-')[0]]",
     "virtualNetworkName": "[concat(parameters('Name'),'VNET')]",
     "subnetName": "Subnet",
@@ -79,8 +82,7 @@
     "publicIPAddressName": "[concat(parameters('Name'), '-ip')]",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
     "networkSecurityGroupName": "[concat(parameters('Name'), 'nsg')]",
-    "scriptURL": "https://raw.githubusercontent.com/xiaoyingLJ/oneGWVM/master/gatewayInstall.ps1",
-    "scriptParameters": "[concat('-gatewayKey ', parameters('gatewayAuthenticationKey'))]"
+    "scriptURL": "[concat(variables('baseUri'), 'gatewayInstall.ps1')]"
   },
   "resources": [
     {
@@ -232,68 +234,20 @@
       }
     },
     {
-      "name": "[concat(variables('networkSecurityGroupName'), 'No')]",
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "apiVersion": "2016-09-01",
-      "location": "[resourceGroup().location]",
-      "tags": {
-            "vmname": "[parameters('Name')]"
-      },
+      "apiVersion": "2015-01-01",
+      "name": "[variables('nsgTemplateName')]",
+      "type": "Microsoft.Resources/deployments",
       "properties": {
-        "securityRules": [
-          {
-            "name": "default-allow-rdp",
-            "properties": {
-                "priority": 1000,
-                "sourceAddressPrefix": "*",
-                "protocol": "TCP",
-                "destinationPortRange": "3389",
-                "access": "Allow",
-                "direction": "Inbound",
-                "sourcePortRange": "*",
-                "destinationAddressPrefix": "*"
-            }
+        "mode": "incremental",
+        "templateLink": {
+          "uri": "[variables('nsglink')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "Name": {
+            "value": "[parameters('Name')]"
           }
-        ]
-      }
-    },
-    {
-      "name": "[concat(variables('networkSecurityGroupName'), 'Yes')]",
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "apiVersion": "2016-09-01",
-      "location": "[resourceGroup().location]",
-      "tags": {
-            "vmname": "[parameters('Name')]"
-      },
-      "properties": {
-        "securityRules": [
-          {
-            "name": "default-allow-rdp",
-            "properties": {
-                "priority": 1000,
-                "sourceAddressPrefix": "*",
-                "protocol": "TCP",
-                "destinationPortRange": "3389",
-                "access": "Allow",
-                "direction": "Inbound",
-                "sourcePortRange": "*",
-                "destinationAddressPrefix": "*"
-            }
-          },
-          {
-            "name": "ResourceManager",
-            "properties": {
-                "priority": 1010,
-                "sourceAddressPrefix": "*",
-                "protocol": "TCP",
-                "destinationPortRange": "8050",
-                "access": "Allow",
-                "direction": "Inbound",
-                "sourcePortRange": "*",
-                "destinationAddressPrefix": "*"
-            }
-          }
-        ]
+        }
       }
     },
     {
@@ -317,7 +271,7 @@
           "fileUris": [ "[variables('scriptURL')]"]
         },
         "protectedSettings": {
-          "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File gatewayInstall.ps1 ', parameters('gatewayKey'), ' ', reference(variables('publicIPAddressName')).dnsSettings.fqdn)]"
+          "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File gatewayInstall.ps1 ', parameters('gatewayAuthenticationKey'), ' ', reference(variables('publicIPAddressName')).dnsSettings.fqdn)]"
         }
       }
     }

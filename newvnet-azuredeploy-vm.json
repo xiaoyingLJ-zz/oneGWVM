@@ -64,8 +64,8 @@
     },
     "allowIncomingRemoteFromCredentialManager": {
       "type": "string",
-      "allowedValues": ["Yes", "No"],
-      "defaultValue": "Yes"
+      "allowedValues": ["yes", "no"],
+      "defaultValue": "yes"
     }
   },
   "variables": {
